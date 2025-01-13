@@ -298,7 +298,7 @@ def get_loader_brats(data_dir, batch_size=1, fold=0, num_workers=8):
 class get_loader_brats_folds:
     def __init__(self, data_dir, batch_size=1, folds=5, num_workers=2):
         
-        all_dirs_train = os.listdir(data_dir+'trainning')
+        all_dirs_train = os.listdir(os.path.join(data_dir+'trainning'))
         all_dirs_validation = os.listdir(data_dir+'validation')
         
           
