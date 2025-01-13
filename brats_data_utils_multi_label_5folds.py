@@ -223,13 +223,13 @@ def get_loader_brats(data_dir, batch_size=1, fold=0, num_workers=8):
     #all_dirs = os.listdir(data_dir)
     
     #
-    all_dirs_train = os.listdir(os.path.join(data_dir+'training'))
+    all_dirs_train = os.listdir(os.path.join(data_dir+'trainning'))
     all_dirs_validation = os.listdir(data_dir+'validation')
     
     
     
     
-    all_paths = [os.path.join(data_dir+'training', d) for d in all_dirs_train]
+    all_paths = [os.path.join(data_dir+'trainning', d) for d in all_dirs_train]
     val_paths = [os.path.join(data_dir+'validation', d) for d in all_dirs_validation]
    
     all_paths = all_paths + val_paths 
@@ -298,15 +298,15 @@ def get_loader_brats(data_dir, batch_size=1, fold=0, num_workers=8):
 class get_loader_brats_folds:
     def __init__(self, data_dir, batch_size=1, folds=5, num_workers=2):
         
-        all_dirs_train = os.listdir(data_dir+'training')
+        all_dirs_train = os.listdir(data_dir+'trainning')
         all_dirs_validation = os.listdir(data_dir+'validation')
         
           
         
-        all_paths = [os.path.join(data_dir+'training', d) for d in all_dirs_train]
+        all_paths = [os.path.join(data_dir+'trainning', d) for d in all_dirs_train]
         val_paths = [os.path.join(data_dir+'validation', d) for d in all_dirs_validation]
 
-        #List all filenames (In the "training" folder as well as "validation" folder)
+        #List all filenames (In the "trainning" folder as well as "validation" folder)
         self.all_paths = all_paths + val_paths 
     
            
@@ -325,7 +325,7 @@ class get_loader_brats_folds:
     
     def get_fold(self, fold_number): # Method only meant for Diffusion code
     
-        # Get all the folds other than "fold_number" for training
+        # Get all the folds other than "fold_number" for trainning
         self.train_files = [x for x in self.all_paths if x not in self.folds[fold_number]]#train_size]
         print(f"train_mid: {self.train_files[42]}, train_end: {self.train_files[-1]}")
 
