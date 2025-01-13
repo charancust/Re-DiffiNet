@@ -22,7 +22,7 @@ import os
 
 
 #data_dir = "/gscratch/kurtlab/brats2023/data/brats-gli/Diff_Data_Final/"
-data_dir = '/gscratch/kurtlab/brats2023/data/brats-gli/diff_cv_final/fold0/'
+data_dir = '/content/drive/MyDrive/MRI_DDPM/'
 
 diffusion_type = 'original' # 'delta' or 'original'
 
