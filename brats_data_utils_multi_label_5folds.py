@@ -176,30 +176,23 @@ class PretrainDataset(Dataset):
     #     } 
 
 
-    def __getitem__(self, i):
+   def __getitem__(self, i):
         if self.cache:
-            return self.cache_data[i]
-    
-        attempt = i
-        while True:
+            image = self.cache_data[i]
+        else :
             try:
-                image = self.read_data(self.datalist[attempt])
-                if self.transform is not None:
-                    image = self.transform(image)
-                return image
-            except Exception as e:
-                # Log the issue
-                with open("./bugs.txt", "a") as f:  # Use "a" to append, avoiding overwriting the file
-                    f.write(f"Bug in dataloader at index {attempt}, file: {self.datalist[attempt]}, error: {str(e)}\n")
-                
-                # Handle edge cases for out-of-bound indices
-                if attempt < len(self.datalist) - 1:
-                    attempt += 1  # Move forward to the next index
-                elif attempt > 0:
-                    attempt -= 1  # Move backward if at the end of the list
-                else:
-                    # If no valid data can be found, raise an error
-                    raise IndexError(f"Cannot find valid data starting from index {i}. Check the dataset.")
+                image = self.read_data(self.datalist[i])
+            except:
+                with open("./bugs.txt", "w+") as f:
+                    f.write(f"bug in dataloader，{self.datalist[i]}\n")
+                if i != len(self.datalist)-1:
+                    return self.__getitem__(i+1)
+                else :
+                    return self.__getitem__(i-1)
+        if self.transform is not None :
+            image = self.transform(image)
+        
+        return image
 
     def __len__(self):
         return len(self.datalist)
