@@ -176,23 +176,24 @@ class PretrainDataset(Dataset):
     #     } 
 
 
-   def __getitem__(self, i):
-        if self.cache:
-            image = self.cache_data[i]
-        else :
-            try:
-                image = self.read_data(self.datalist[i])
-            except:
-                with open("./bugs.txt", "w+") as f:
-                    f.write(f"bug in dataloader，{self.datalist[i]}\n")
-                if i != len(self.datalist)-1:
-                    return self.__getitem__(i+1)
-                else :
-                    return self.__getitem__(i-1)
-        if self.transform is not None :
-            image = self.transform(image)
-        
-        return image
+def __getitem__(self, i):
+    if self.cache:
+        image = self.cache_data[i]
+    else:
+        try:
+            image = self.read_data(self.datalist[i])
+        except:
+            with open("./bugs.txt", "w+") as f:
+                f.write(f"bug in dataloader, {self.datalist[i]}\n")
+            if i != len(self.datalist) - 1:
+                return self.__getitem__(i + 1)
+            else:
+                return self.__getitem__(i - 1)
+    if self.transform is not None:
+        image = self.transform(image)
+    
+    return image
+
 
     def __len__(self):
         return len(self.datalist)
