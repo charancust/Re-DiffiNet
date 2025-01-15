@@ -79,20 +79,38 @@ def resample_img(
 
     return image
 
-class PretrainDataset(Dataset):
-    def __init__(self, datalist, transform=None, cache=False) -> None:
-        super().__init__()
-        self.transform = transform
+class PretrainDataset:
+    def __init__(self, datalist, transform=None, cache=False):
         self.datalist = datalist
+        self.transform = transform
         self.cache = cache
-        if cache:
-            self.cache_data = []
-            for i in tqdm(range(len(datalist)), total=len(datalist)):
-                d  = self.read_data(datalist[i])
-                self.cache_data.append(d)
+        if self.cache:
+            self.cache_data = [self.read_data(item) for item in self.datalist]
 
+    def __getitem__(self, i):
+        if self.cache:
+            return self.cache_data[i]
 
+        attempt = i
+        while True:
+            try:
+                image = self.read_data(self.datalist[attempt])
+                if self.transform is not None:
+                    image = self.transform(image)
+                return image
+            except Exception as e:
+                with open("./bugs.txt", "a") as f:
+                    f.write(f"Bug in dataloader at index {attempt}, file: {self.datalist[attempt]}, error: {str(e)}\n")
 
+                if attempt < len(self.datalist) - 1:
+                    attempt += 1
+                elif attempt > 0:
+                    attempt -= 1
+                else:
+                    raise IndexError(f"Cannot find valid data starting from index {i}. Check the dataset.")
+
+    def __len__(self):
+        return len(self.datalist)
 
     def read_data(self,data_path):       
         x1, x2, x3, x4, y1,yp = pkload(data_path) 
