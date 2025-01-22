@@ -81,37 +81,44 @@ def resample_img(
 
 class PretrainDataset:
     def __init__(self, datalist, transform=None, cache=False):
+        if not datalist:
+            raise ValueError("The datalist is empty. Please provide a valid dataset.")
         self.datalist = datalist
         self.transform = transform
         self.cache = cache
         if self.cache:
-            self.cache_data = [self.read_data(item) for item in self.datalist]
+            self.cache_data = []
+            for item in self.datalist:
+                try:
+                    self.cache_data.append(self.read_data(item))
+                except Exception as e:
+                    with open("./bugs.txt", "a") as f:
+                        f.write(f"Failed to cache file: {item}, error: {str(e)}\n")
 
     def __getitem__(self, i):
         print(f"Fetching data index: {i}")
         if self.cache:
             return self.cache_data[i]
 
-        attempt = i
-        while True:
+        retries = 0
+        max_retries = len(self.datalist)
+        while retries < max_retries:
             try:
-                image = self.read_data(self.datalist[attempt])
+                image = self.read_data(self.datalist[i])
                 if self.transform is not None:
                     image = self.transform(image)
                 return image
             except Exception as e:
                 with open("./bugs.txt", "a") as f:
-                    f.write(f"Bug in dataloader at index {attempt}, file: {self.datalist[attempt]}, error: {str(e)}\n")
+                    f.write(f"Error at index {i}: {str(e)}\n")
+                i = (i + 1) % len(self.datalist)
+                retries += 1
 
-                if attempt < len(self.datalist) - 1:
-                    attempt += 1
-                elif attempt > 0:
-                    attempt -= 1
-                else:
-                    raise IndexError(f"Cannot find valid data starting from index {i}. Check the dataset.")
+        raise RuntimeError(f"Failed to fetch valid data after {max_retries} retries. Dataset might be corrupted.")
 
     def __len__(self):
         return len(self.datalist)
+
 
     def read_data(self,data_path):       
         x1, x2, x3, x4, y1,yp = pkload(data_path) 
