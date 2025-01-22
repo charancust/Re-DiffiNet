@@ -196,6 +196,7 @@ class PretrainDataset:
 
 
 def __getitem__(self, i):
+    print(f"Fetching data index: {i}")
     if self.cache:
         image = self.cache_data[i]
     else:
