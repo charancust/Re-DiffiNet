@@ -88,6 +88,7 @@ class PretrainDataset:
             self.cache_data = [self.read_data(item) for item in self.datalist]
 
     def __getitem__(self, i):
+        print(f"Fetching data index: {i}")
         if self.cache:
             return self.cache_data[i]
 
